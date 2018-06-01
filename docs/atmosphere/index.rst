@@ -29,17 +29,6 @@ Getting Started
 
 TODO: add examples.
 
-Submodules
-==========
-
-.. toctree::
-  :maxdepth: 1
-  :glob:
-
-  index_*
-
-
-
 Reference/API
 =============
 
