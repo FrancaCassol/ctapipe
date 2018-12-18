@@ -8,6 +8,7 @@ import numpy as np
 
 from astropy import units as u
 import glob
+import struct
 from os import getcwd
 from ctapipe.core import Provenance
 from ctapipe.instrument import TelescopeDescription, SubarrayDescription, \
@@ -185,10 +186,34 @@ class LSTEventSource(EventSource):
         event_container.ped_id = event.ped_id
         event_container.module_status = event.lstcam.module_status
         event_container.extdevices_presence = event.lstcam.extdevices_presence
-        event_container.tib_data = event.lstcam.tib_data
+
+        # unpack TIB data
+        rec_fmt = '=IHIBB'
+        rec_unpack = struct.Struct(rec_fmt).unpack_from
+        unpacked_tib = rec_unpack(event.lstcam.tib_data)
+        event_container.tib_event_counter = unpacked_tib[0]
+        event_container.tib_pps_counter = unpacked_tib[1]
+        event_container.tib_tenMHz_counter = unpacked_tib[2]
+        event_container.tib_stereo_pattern = unpacked_tib[3]
+        event_container.tib_masked_trigger = unpacked_tib[4]
+
         event_container.cdts_data = event.lstcam.cdts_data
         event_container.swat_data = event.lstcam.swat_data
-        event_container.counters = event.lstcam.counters
+
+        # unpack Dragon counters
+        rec_fmt = '=HIIIQ'
+        rec_len = struct.calcsize(rec_fmt)
+        rec_unpack = struct.Struct(rec_fmt).unpack_from
+        for mod in range(self.camera_config.lstcam.num_modules):
+
+            words=event.lstcam.counters[mod*rec_len:(mod+1)*rec_len]
+            unpacked_counter = rec_unpack(words)
+            event_container.pps_counter.append(unpacked_counter[0])
+            event_container.tenMHz_counter.append(unpacked_counter[1])
+            event_container.event_counter.append(unpacked_counter[2])
+            event_container.trigger_counter.append(unpacked_counter[3])
+            event_container.local_clock_counter.append(unpacked_counter[4])
+
         event_container.chips_flags = event.lstcam.chips_flags
         event_container.first_capacitor_id = event.lstcam.first_capacitor_id
         event_container.drs_tag_status = event.lstcam.drs_tag_status
@@ -244,6 +269,8 @@ class LSTEventSource(EventSource):
             r0_camera_container,
             event
         )
+
+
 
 
 class MultiFiles:
