@@ -538,9 +538,17 @@ class LSTEventContainer(Container):
     tib_pps_counter = Field(None, "TIB pps counter")
     tib_tenMHz_counter = Field(None, "TIB 10 MHz counter")
     tib_stereo_pattern = Field(None, "TIB stereo pattern")
-    tib_masked_trigger = Field(None, "TIB masked trigger")
+    tib_masked_trigger = Field(None, "TIB trigger mask")
 
-    cdts_data = Field([], "CDTS data array")
+    ucts_event_counter =  Field(None, "UCTS event counter")
+    ucts_pps_counter = Field(None, "UCTS pps counter")
+    ucts_clock_counter = Field(None, "UCTS clock counter")
+    ucts_timestamp = Field(None, "UCTS timestamp")
+    ucts_camera_timestamp = Field(None, "UCTS camera timestamp")
+    ucts_trigger_type = Field(None, "UCTS trigger type")
+    ucts_white_rabbit_status = Field(None, "UCTS whiteRabbit status")
+
+    #cdts_data = Field([], "CDTS data array")
     swat_data = Field([], "SWAT data array")
 
     pps_counter= Field([], "Dragon pulse per second counter (n_modules)")
