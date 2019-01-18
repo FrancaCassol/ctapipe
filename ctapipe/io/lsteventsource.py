@@ -7,6 +7,8 @@ Needs protozfits v1.4.2 from github.com/cta-sst-1m/protozfitsreader
 import glob
 import numpy as np
 from astropy import units as u
+import struct
+
 from ctapipe.core import Provenance
 from ctapipe.instrument import TelescopeDescription, SubarrayDescription, \
     CameraGeometry, OpticsDescription
@@ -177,10 +179,47 @@ class LSTEventSource(EventSource):
         event_container.ped_id = event.ped_id
         event_container.module_status = event.lstcam.module_status
         event_container.extdevices_presence = event.lstcam.extdevices_presence
-        event_container.tib_data = event.lstcam.tib_data
-        event_container.cdts_data = event.lstcam.cdts_data
+
+        # unpack TIB data
+        rec_fmt = '=IHIBB'
+        rec_unpack = struct.Struct(rec_fmt).unpack_from
+        unpacked_tib = rec_unpack(event.lstcam.tib_data)
+        event_container.tib_event_counter = unpacked_tib[0]
+        event_container.tib_pps_counter = unpacked_tib[1]
+        event_container.tib_tenMHz_counter = unpacked_tib[2]
+        event_container.tib_stereo_pattern = unpacked_tib[3]
+        event_container.tib_masked_trigger = unpacked_tib[4]
+
+        #event_container.cdts_data = event.lstcam.cdts_data
         event_container.swat_data = event.lstcam.swat_data
-        event_container.counters = event.lstcam.counters
+
+        # unpack CDTS data
+        rec_fmt = '=IIIQQBBB'
+        rec_unpack = struct.Struct(rec_fmt).unpack_from
+        unpacked_cdts = rec_unpack(event.lstcam.cdts_data)
+        event_container.ucts_event_counter = unpacked_cdts[0]
+        event_container.ucts_pps_counter = unpacked_cdts[1]
+        event_container.ucts_clock_counter = unpacked_cdts[2]
+        event_container.ucts_timestamp = unpacked_cdts[3]
+        event_container.ucts_camera_timestamp = unpacked_cdts[4]
+        event_container.ucts_trigger_type = unpacked_cdts[5]
+        event_container.ucts_white_rabbit_status = unpacked_cdts[6]
+
+
+        # unpack Dragon counters
+        rec_fmt = '=HIIIQ'
+        rec_len = struct.calcsize(rec_fmt)
+        rec_unpack = struct.Struct(rec_fmt).unpack_from
+        for mod in range(self.camera_config.lstcam.num_modules):
+
+            words=event.lstcam.counters[mod*rec_len:(mod+1)*rec_len]
+            unpacked_counter = rec_unpack(words)
+            event_container.pps_counter.append(unpacked_counter[0])
+            event_container.tenMHz_counter.append(unpacked_counter[1])
+            event_container.event_counter.append(unpacked_counter[2])
+            event_container.trigger_counter.append(unpacked_counter[3])
+            event_container.local_clock_counter.append(unpacked_counter[4])
+
         event_container.chips_flags = event.lstcam.chips_flags
         event_container.first_capacitor_id = event.lstcam.first_capacitor_id
         event_container.drs_tag_status = event.lstcam.drs_tag_status
@@ -237,6 +276,8 @@ class LSTEventSource(EventSource):
             r0_camera_container,
             event
         )
+
+
 
 
 class MultiFiles:
