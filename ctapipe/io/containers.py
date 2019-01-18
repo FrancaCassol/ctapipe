@@ -826,8 +826,37 @@ class PedestalCameraContainer(Container):
     """
     Container for pedestals per camera    
     """
-    # still to be filled
-      
+    time_mean = Field(0, 'Mean time, seconds since reference', unit=u.s)
+    time_range = Field(
+        [],
+        'Range of time of the calibration data [t_min, t_max]',
+        unit=u.s
+    )
+    n_events = Field(0, 'Number of events used for statistics')
+    pedestal_mean = Field(
+        None,
+        "np array of pedestal average (n_chan X N_pix)"
+    )
+    pedestal_median = Field(
+        None,
+        "np array of the pedestal  median (n_chan X N_pix)"
+    )
+    pedestal_rms = Field(
+        None,
+        "np array of the pedestal rms (n_chan X N_pix)"
+    )
+    relative_pedestal_mean = Field(
+        None,
+        "np array of relative pedestal average (n_chan X N_pix)"
+    )
+    relative_pedestal_median = Field(
+        None,
+        "np array of the relative pedestal  median (n_chan X N_pix)"
+    )
+    relative_pedestal_rms = Field(
+        None,
+        "np array of the relative pedestal rms (n_chan X N_pix)"
+    )
 
 class PedestalContainer(Container):
     """
