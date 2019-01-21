@@ -7,13 +7,13 @@ import numpy as np
 from astropy import units as u
 from ctapipe.core import Component, Factory
 
-from ctapipe.image import ChargeExtractorFactory, WaveformCleanerFactory
+from ctapipe.image import ChargeExtractorFactory
 from ctapipe.core.traits import Int
 from ctapipe.io.containers import PedestalCameraContainer
 
 __all__ = [
     'PedestalCalculator',
-    'ChargeIntegrator',
+    'PedestalIntegrator',
     'PedestalFactory'
 ]
 
@@ -72,7 +72,7 @@ class PedestalCalculator(Component):
         # initialize the output
         self.container = PedestalCameraContainer()
 
-        # load the waveform charge extractor and cleaner
+        # load the waveform charge extractor
         kwargs_ = dict()
         if extractor_product:
             kwargs_['product'] = extractor_product
@@ -98,7 +98,7 @@ class PedestalCalculator(Component):
         """
 
 
-class ChargeIntegrator(PedestalCalculator):
+class PedestalIntegrator(PedestalCalculator):
 
     def __init__(self, config=None, tool=None, **kwargs):
         """Calculates pedestal parameters from pedestal events
@@ -172,9 +172,9 @@ class ChargeIntegrator(PedestalCalculator):
         charge, time, window = self._extract_charge(event)
 
         # divide by the width of the integration window
-        event_pedestal = charge/window
+        event_pedestal = charge/np.sum(window, axis=2)
 
-        self.collect_sample(event_pedestal, pixel_status, time)
+        self.collect_sample(event_pedestal, pixel_status)
 
         sample_age = trigger_time - self.time_start
 

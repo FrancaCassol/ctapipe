@@ -79,7 +79,7 @@ class LSTEventSource(EventSource):
         # Instrument information
         for tel_id in self.data.lst.tels_with_data:
 
-            assert tel_id == 0  # only LST1 for the moment (id = 0)
+            assert (tel_id == 0 or tel_id == 1) # only LST1 for the moment id = 0)
 
             # optics info from standard optics.fits.gz file
             optics = OpticsDescription.from_name("LST")
@@ -276,7 +276,10 @@ class LSTEventSource(EventSource):
             r0_camera_container,
             event
         )
-
+        # temporary patch to have an event time set
+        r0_camera_container.trigger_time = (
+            self.data.lst.tel[self.camera_config.telescope_id].evt.tib_pps_counter +
+            self.data.lst.tel[self.camera_config.telescope_id].evt.tib_tenMHz_counter * 10**(-7))
 
 
 

@@ -404,6 +404,107 @@ class TelescopePointingContainer(Container):
     altitude = Field(nan * u.rad, 'Altitude', unit=u.rad)
 
 
+class FlatFieldCameraContainer(Container):
+    """
+    Container for relative camera flat-field coefficients
+
+    """
+
+    time_mean = Field(0, 'Mean time, seconds since reference', unit=u.s)
+    time_range = Field(
+        [],
+        'Range of time of the calibration data [t_min, t_max]',
+        unit=u.s
+    )
+    n_events = Field(0, 'Number of events used for statistics')
+    relative_gain_mean = Field(
+        None,
+        "np array of the relative flat-field coefficient mean (n_chan X N_pix)"
+    )
+    relative_gain_median = Field(
+        None,
+        "np array of the relative flat-field coefficient  median (n_chan X N_pix)"
+    )
+    relative_gain_rms = Field(
+        None,
+        "np array of the relative flat-field coefficient rms (n_chan X N_pix)"
+    )
+    relative_time_mean = Field(
+        None,
+        "np array of the relative time mean (n_chan X N_pix)",
+        unit=u.ns
+    )
+    relative_time_median = Field(
+        None,
+        "np array of the relative time  median (n_chan X N_pix)",
+        unit=u.ns)
+
+
+class FlatFieldContainer(Container):
+    """
+    Container for relative flat field coefficients
+    """
+    tels_with_data = Field([], "list of telescopes with data")
+    tel = Field(
+        Map(FlatFieldCameraContainer),
+        "map of tel_id to FlatFiledCameraContainer")
+
+
+class PedestalCameraContainer(Container):
+    """
+    Container for pedestals per camera
+    """
+    time_mean = Field(0, 'Mean time, seconds since reference', unit=u.s)
+    time_range = Field(
+        [],
+        'Range of time of the calibration data [t_min, t_max]',
+        unit=u.s
+    )
+    n_events = Field(0, 'Number of events used for statistics')
+    pedestal_mean = Field(
+        None,
+        "np array of pedestal average (n_chan X N_pix)"
+    )
+    pedestal_median = Field(
+        None,
+        "np array of the pedestal  median (n_chan X N_pix)"
+    )
+    pedestal_rms = Field(
+        None,
+        "np array of the pedestal rms (n_chan X N_pix)"
+    )
+    relative_pedestal_mean = Field(
+        None,
+        "np array of relative pedestal average (n_chan X N_pix)"
+    )
+    relative_pedestal_median = Field(
+        None,
+        "np array of the relative pedestal  median (n_chan X N_pix)"
+    )
+    relative_pedestal_rms = Field(
+        None,
+        "np array of the relative pedestal rms (n_chan X N_pix)"
+    )
+
+
+class PedestalContainer(Container):
+    """
+    Container for pedestal data
+    """
+    tels_with_data = Field([], "list of telescopes with data")
+    tel = Field(
+        Map(PedestalCameraContainer),
+        "map of tel_id to PedestalCameraContainer")
+
+
+class MonitorDataContainer(Container):
+    """
+    Root container for MON data
+    """
+    flatfield = Field(FlatFieldContainer(), "Relative flat field data")
+    pedestal = Field(PedestalContainer(), "Pedestal data")
+
+
 class DataContainer(Container):
     """ Top-level container for all event information """
 
@@ -419,6 +520,7 @@ class DataContainer(Container):
     inst = Field(InstrumentContainer(), "instrumental information (deprecated")
     pointing = Field(Map(TelescopePointingContainer),
                      'Telescope pointing positions')
+    mon = Field(MonitorDataContainer(), "container for MON data")
 
 
 class SST1MDataContainer(DataContainer):
@@ -795,105 +897,3 @@ class TimingParametersContainer(Container):
     slope = Field(nan, 'Slope of arrival times along main shower axis')
     intercept = Field(nan, 'intercept of arrival times along main shower axis')
 
-
-class FlatFieldCameraContainer(Container):
-    """
-    Container for relative camera flat-field coefficients
-
-    """
-   
-    time_mean = Field(0, 'Mean time, seconds since reference', unit=u.s)
-    time_range = Field(
-        [],
-        'Range of time of the calibration data [t_min, t_max]',
-        unit=u.s
-    )
-    n_events = Field(0, 'Number of events used for statistics')
-    relative_gain_mean = Field(
-        None,
-        "np array of the relative flat-field coefficient mean (n_chan X N_pix)"
-    )
-    relative_gain_median = Field(
-        None,
-        "np array of the relative flat-field coefficient  median (n_chan X N_pix)"
-    )
-    relative_gain_rms = Field(
-        None,
-        "np array of the relative flat-field coefficient rms (n_chan X N_pix)"
-    )
-    relative_time_mean = Field(
-        None,
-        "np array of the relative time mean (n_chan X N_pix)",
-        unit=u.ns
-    )
-    relative_time_median = Field(
-        None,
-        "np array of the relative time  median (n_chan X N_pix)",
-        unit=u.ns)
-
-
-class FlatFieldContainer(Container):
-    """
-    Container for relative flat field coefficients
-    """
-    tels_with_data = Field([], "list of telescopes with data")
-    tel = Field(
-        Map(FlatFieldCameraContainer),
-        "map of tel_id to FlatFiledCameraContainer")
-    
-     
-class PedestalCameraContainer(Container):     
-    """
-    Container for pedestals per camera    
-    """
-    time_mean = Field(0, 'Mean time, seconds since reference', unit=u.s)
-    time_range = Field(
-        [],
-        'Range of time of the calibration data [t_min, t_max]',
-        unit=u.s
-    )
-    n_events = Field(0, 'Number of events used for statistics')
-    pedestal_mean = Field(
-        None,
-        "np array of pedestal average (n_chan X N_pix)"
-    )
-    pedestal_median = Field(
-        None,
-        "np array of the pedestal  median (n_chan X N_pix)"
-    )
-    pedestal_rms = Field(
-        None,
-        "np array of the pedestal rms (n_chan X N_pix)"
-    )
-    relative_pedestal_mean = Field(
-        None,
-        "np array of relative pedestal average (n_chan X N_pix)"
-    )
-    relative_pedestal_median = Field(
-        None,
-        "np array of the relative pedestal  median (n_chan X N_pix)"
-    )
-    relative_pedestal_rms = Field(
-        None,
-        "np array of the relative pedestal rms (n_chan X N_pix)"
-    )
-
-class PedestalContainer(Container):
-    """
-    Container for pedestal data
-    """
-    tels_with_data = Field([], "list of telescopes with data")
-    tel = Field(
-        Map(PedestalCameraContainer),
-        "map of tel_id to PedestalCameraContainer")
-
-
-class MonitorDataContainer(Container):
-    """
-    Root container for MON data   
-    """
-    flatfield = Field(FlatFieldContainer(), "Relative flat field data")
-    pedestal = Field(PedestalContainer(), "Pedestal data")
-  
-
-  
