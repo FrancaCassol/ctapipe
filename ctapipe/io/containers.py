@@ -486,7 +486,6 @@ class PedestalCameraContainer(Container):
         "np array of the relative pedestal rms (n_chan X N_pix)"
     )
 
-
 class PedestalContainer(Container):
     """
     Container for pedestal data
@@ -496,6 +495,32 @@ class PedestalContainer(Container):
         Map(PedestalCameraContainer),
         "map of tel_id to PedestalCameraContainer")
 
+
+class MaskedPixelCamersContainer(Container):
+    hardware_mask = Field(
+        None,
+        "Mask from the hardware pixel status data (N_pix)"
+    )
+
+    pedestal_mask = Field(
+        None,
+        "Mask from the pedestal data analysis (N_pix)"
+    )
+
+    flatfield_mask = Field(
+        None,
+        "Mask from the flat-flield data analysis (N_pix)"
+    )
+
+
+class MaskedPixelContainer(Container):
+    """
+    Container for pedestal data
+    """
+    tels_with_data = Field([], "list of telescopes with data")
+    tel = Field(
+        Map(MaskedPixelContainer),
+        "map of tel_id to MaskedPixelsContainer")
 
 class MonitorDataContainer(Container):
     """
