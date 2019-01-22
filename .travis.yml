@@ -20,6 +20,7 @@ matrix:
         - PYTHON_VERSION=3.7
 
 
+
 before_install:
 
     # Use utf8 encoding. Should be default, but this is insurance
@@ -51,6 +52,7 @@ install:
     - source activate cta-dev
     - ulimit -s 16000  # increase stack size limit, for libhessio
     - pip install travis-sphinx
+
     - python setup.py develop
 
 script:
