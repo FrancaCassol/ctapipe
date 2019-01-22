@@ -13,7 +13,7 @@ from ctapipe.calib.camera.flatfield import FlatFieldFactory
 from ctapipe.io.containers import MonitorDataContainer
 
 
-class FlatFieldHDF5Writer(Tool):
+class PedestalsHDF5Writer(Tool):
     name = "FlatFieldHDF5Writer"
     description = "Generate a HDF5 file with flat field coefficients"
 
@@ -76,7 +76,7 @@ class FlatFieldHDF5Writer(Tool):
 
         for count, event in enumerate(self.eventsource):
 
-            ff_data = self.flatfield.calculate_relative_gain(event)
+            ff_data = self.flatfield.calculate_pedestals(event)
 
             if ff_data:
                 self.container.flatfield.tel[self.flatfield.tel_id] = ff_data
@@ -95,7 +95,7 @@ class FlatFieldHDF5Writer(Tool):
 
 
 def main():
-    exe = FlatFieldHDF5Writer()
+    exe = PedestalsHDF5Writer()
     exe.run()
 
 

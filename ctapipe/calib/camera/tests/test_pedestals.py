@@ -1,6 +1,28 @@
-""" test code to ensure pedestal functions behave correctly """
+from ctapipe.utils import get_dataset_path
+from ctapipe.io.nectarcameventsource import NectarCAMEventSource
+from ctapipe.calib.camera.pedestals import PedestalIntegrator
 from .. import pedestals
+
 import numpy as np
+
+def test_pedestal_calculator():
+
+    example_file_path = get_dataset_path("NectarCAM.Run0890.10events.fits.fz")
+
+    inputfile_reader = NectarCAMEventSource(
+        input_url=example_file_path,
+        max_events=10
+    )
+
+    ped_calculator = PedestalIntegrator(sample_size=3, tel_id=0)
+
+    for event in inputfile_reader:
+
+        ped_data = ped_calculator.calculate_pedestals(event)
+
+        if ped_calculator.num_events_seen == ped_calculator.sample_size:
+            assert ped_data
+
 
 
 def test_calc_pedestals_from_traces():
