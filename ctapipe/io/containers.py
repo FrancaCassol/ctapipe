@@ -496,7 +496,7 @@ class PedestalContainer(Container):
         "map of tel_id to PedestalCameraContainer")
 
 
-class MaskedPixelCamersContainer(Container):
+class BadPixelCameraContainer(Container):
     hardware_mask = Field(
         None,
         "Mask from the hardware pixel status data (N_pix)"
@@ -513,14 +513,14 @@ class MaskedPixelCamersContainer(Container):
     )
 
 
-class MaskedPixelContainer(Container):
+class BadPixelContainer(Container):
     """
     Container for pedestal data
     """
     tels_with_data = Field([], "list of telescopes with data")
     tel = Field(
-        Map(MaskedPixelContainer),
-        "map of tel_id to MaskedPixelsContainer")
+        Map(BadPixelContainer),
+        "map of tel_id to BadPixelsContainer")
 
 class MonitorDataContainer(Container):
     """
@@ -528,6 +528,7 @@ class MonitorDataContainer(Container):
     """
     flatfield = Field(FlatFieldContainer(), "Relative flat field data")
     pedestal = Field(PedestalContainer(), "Pedestal data")
+    bad_pixel = Field(BadPixelContainer(), "Bad pixel data")
 
 
 class DataContainer(Container):
