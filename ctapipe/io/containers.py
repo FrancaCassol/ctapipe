@@ -519,7 +519,7 @@ class BadPixelContainer(Container):
     """
     tels_with_data = Field([], "list of telescopes with data")
     tel = Field(
-        Map(BadPixelContainer),
+        Map(BadPixelCameraContainer),
         "map of tel_id to BadPixelsContainer")
 
 class MonitorDataContainer(Container):
