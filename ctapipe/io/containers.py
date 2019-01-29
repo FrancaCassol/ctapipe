@@ -554,16 +554,8 @@ class MonitorDataContainer(Container):
     """
     Root container for MON data
     """
-    flatfield = Field(FlatFieldContainer(), "Relative flat field data")
-    pedestal = Field(PedestalContainer(), "Pedestal data")
-    bad_pixel = Field(BadPixelContainer(), "Bad pixel data")
-
-class LSTMonitorContainer(Container):
-    """
-    Root container for MON data
-    """
-    flatfield = Field(FlatFieldCameraContainer(), "Results from flat field events analysis")
-    pedestal = Field(PedestalCameraContainer(), "Results from pedestal events analysis")
+    flatfield = Field(FlatFieldCameraContainer(), "Results from flat-field event analysis")
+    pedestal = Field(PedestalCameraContainer(), "Results from pedestal event analysis")
     bad_pixel = Field(BadPixelCameraContainer(), "Bad pixel data")
 
 class DataContainer(Container):
@@ -732,7 +724,7 @@ class LSTCameraContainer(Container):
 
     evt = Field(LSTEventContainer(), "LST specific event Information")
     svc = Field(LSTServiceContainer(), "LST specific camera_config Information")
-    mon = Field(LSTMonitorContainer(), "Container for monitor (MON) data")
+    mon = Field(MonitorDataContainer(), "Container for monitor (MON) data")
 
 
 
