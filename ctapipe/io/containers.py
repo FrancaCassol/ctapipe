@@ -406,7 +406,7 @@ class TelescopePointingContainer(Container):
 
 class FlatFieldCameraContainer(Container):
     """
-    Container for relative camera flat-field coefficients
+    Container for camera flat-field coefficients
 
     """
 
@@ -562,8 +562,8 @@ class LSTMonitorContainer(Container):
     """
     Root container for MON data
     """
-    flatfield = Field(FlatFieldCameraContainer(), "Relative flat field data")
-    pedestal = Field(PedestalCameraContainer(), "Pedestal data")
+    flatfield = Field(FlatFieldCameraContainer(), "Results from flat field events analysis")
+    pedestal = Field(PedestalCameraContainer(), "Results from pedestal events analysis")
     bad_pixel = Field(BadPixelCameraContainer(), "Bad pixel data")
 
 class DataContainer(Container):
