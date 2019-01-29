@@ -417,6 +417,20 @@ class FlatFieldCameraContainer(Container):
         unit=u.s
     )
     n_events = Field(0, 'Number of events used for statistics')
+
+    charge_mean = Field(
+        None,
+        "np array of the flat-field charge mean (n_chan X N_pix)"
+    )
+    charge_median = Field(
+        None,
+        "np array of the relative flat-field charge median (n_chan X N_pix)"
+    )
+    charge_rms = Field(
+        None,
+        "np array of the relative flat-field charge rms (n_chan X N_pix)"
+    )
+
     relative_gain_mean = Field(
         None,
         "np array of the relative flat-field coefficient mean (n_chan X N_pix)"
@@ -429,6 +443,20 @@ class FlatFieldCameraContainer(Container):
         None,
         "np array of the relative flat-field coefficient rms (n_chan X N_pix)"
     )
+
+    absolute_gain_mean = Field(
+        None,
+        "np array of the relative flat-field coefficient mean (n_chan X N_pix)"
+    )
+    absolute_gain_median = Field(
+        None,
+        "np array of the relative flat-field coefficient  median (n_chan X N_pix)"
+    )
+    absolute_gain_rms = Field(
+        None,
+        "np array of the relative flat-field coefficient rms (n_chan X N_pix)"
+    )
+
     relative_time_mean = Field(
         None,
         "np array of the relative time mean (n_chan X N_pix)",
@@ -530,6 +558,13 @@ class MonitorDataContainer(Container):
     pedestal = Field(PedestalContainer(), "Pedestal data")
     bad_pixel = Field(BadPixelContainer(), "Bad pixel data")
 
+class LSTMonitorContainer(Container):
+    """
+    Root container for MON data
+    """
+    flatfield = Field(FlatFieldCameraContainer(), "Relative flat field data")
+    pedestal = Field(PedestalCameraContainer(), "Pedestal data")
+    bad_pixel = Field(BadPixelCameraContainer(), "Bad pixel data")
 
 class DataContainer(Container):
     """ Top-level container for all event information """
@@ -546,7 +581,6 @@ class DataContainer(Container):
     inst = Field(InstrumentContainer(), "instrumental information (deprecated")
     pointing = Field(Map(TelescopePointingContainer),
                      'Telescope pointing positions')
-    mon = Field(MonitorDataContainer(), "container for MON data")
 
 
 class SST1MDataContainer(DataContainer):
@@ -695,9 +729,10 @@ class LSTCameraContainer(Container):
     """
     Container for Fields that are specific to each LST camera
     """
+
     evt = Field(LSTEventContainer(), "LST specific event Information")
     svc = Field(LSTServiceContainer(), "LST specific camera_config Information")
-
+    mon = Field(LSTMonitorContainer(), "Container for monitor (MON) data")
 
 
 
@@ -719,6 +754,7 @@ class LSTDataContainer(DataContainer):
     Data container including LST information
     """
     lst = Field(LSTContainer(), "LST specific Information")
+#    mon = Field(MonitorDataContainer(), "container for MON data")
 
 
 class TargetIOCameraContainer(Container):
